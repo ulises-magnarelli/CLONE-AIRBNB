@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                        Int                   @id @default(autoincrement())
+  nombre                    String
+  email                     String                @unique
+  tipo                      Int
+  notificaciones            Notificacion[]
+  alojamientos              Alojamiento[]
+  reservas                  Reserva[]
+  cambiosDeEstadoRealizados CambioEstadoReserva[] // 👈 ESTA LÍNEA
+}
+
+model Notificacion {
+  id         Int       @id @default(autoincrement())
+  mensaje    String
+  fechaAlta  DateTime  @default(now())
+  estado     Int // 0 = PENDIENTE, 1 = LEIDA
+  fechaLeida DateTime?
+  usuarioId  Int
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+}
+
+model Alojamiento {
+  id               Int              @id @default(autoincrement())
+  anfitrionId      Int
+  anfitrion        Usuario          @relation(fields: [anfitrionId], references: [id])
+  nombre           String
+  descripcion      String
+  precioPorNoche   Float
+  moneda           Int
+  horarioCheckIn   String
+  horarioCheckOut  String
+  direccionId      Int
+  direccion        Direccion        @relation(fields: [direccionId], references: [id])
+  cantHuespedesMax Int
+  fotos            Foto[]
+  reservas         Reserva[]
+  caracteristicas  Caracteristica[] @relation("AlojamientoCaracteristicas")
+}
+
+model Pais {
+  id       Int      @id @default(autoincrement())
+  nombre   String
+  ciudades Ciudad[]
+}
+
+model Ciudad {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  paisId      Int
+  pais        Pais        @relation(fields: [paisId], references: [id])
+  direcciones Direccion[]
+}
+
+model Direccion {
+  id           Int           @id @default(autoincrement())
+  calle        String
+  altura       String
+  lat          Float
+  long         Float
+  ciudadId     Int
+  ciudad       Ciudad        @relation(fields: [ciudadId], references: [id])
+  alojamientos Alojamiento[]
+}
+
+model Foto {
+  id            Int         @id @default(autoincrement())
+  descripcion   String
+  path          String
+  alojamientoId Int
+  alojamiento   Alojamiento @relation(fields: [alojamientoId], references: [id])
+}
+
+model Caracteristica {
+  id           Int           @id @default(autoincrement())
+  nombre       String
+  alojamientos Alojamiento[] @relation("AlojamientoCaracteristicas")
+}
+
+model Reserva {
+  id                  Int                   @id @default(autoincrement())
+  fechaAlta           DateTime              @default(now())
+  huespedReservadorId Int
+  huespedReservador   Usuario               @relation(fields: [huespedReservadorId], references: [id])
+  cantidadHuespedes   Int
+  alojamientoId       Int
+  alojamiento         Alojamiento           @relation(fields: [alojamientoId], references: [id])
+  fechaInicio         DateTime
+  fechaFin            DateTime
+  estado              Int // 0 = PENDIENTE, 1 = CONFIRMADA, 2 = CANCELADA
+  precioPorNoche      Float
+  cambiosEstado       CambioEstadoReserva[]
+}
+
+model CambioEstadoReserva {
+  id        Int      @id @default(autoincrement())
+  fecha     DateTime
+  estado    Int
+  motivo    String
+  usuarioId Int
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  reservaId Int
+  reserva   Reserva  @relation(fields: [reservaId], references: [id])
+}
