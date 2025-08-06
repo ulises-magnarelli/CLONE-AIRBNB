@@ -7,4 +7,4 @@ export class RangoFechas {
             throw new Error('La fecha de fin no puede ser anterior a la de inicio.');
         }
     }
-}
+} 

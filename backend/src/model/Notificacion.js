@@ -4,7 +4,8 @@ export class Notificacion {
   static crearNotificacionReservaCreada(reserva) {
     const mensaje = `Nueva reserva para el alojamiento "${reserva.alojamiento.nombre}"
       desde ${new Date(reserva.fechaInicio).toLocaleDateString("en-GB")}  
-      hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")}.`;
+      hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")},
+      realizada por ${reserva.huespedReservador.nombre}.`;
 
     return {
       mensaje,
@@ -19,7 +20,7 @@ export class Notificacion {
     const mensaje = `Tu reserva para el alojamiento "${reserva.alojamiento.nombre}"
       desde ${new Date(reserva.fechaInicio).toLocaleDateString("en-GB")}  
       hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")}
-      fue aceptada por el anfitrión.`;
+      fue aceptada por el anfitrión ${reserva.alojamiento.anfitrion.nombre}.`;
 
     return {
       mensaje,
@@ -34,7 +35,8 @@ export class Notificacion {
     const mensaje = `La reserva para el alojamiento "${reserva.alojamiento.nombre}"
       desde ${new Date(reserva.fechaInicio).toLocaleDateString("en-GB")}
       hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")}
-      fue cancelada. Motivo: ${motivo}`;
+      fue cancelada por el huésped ${reserva.huespedReservador.nombre}.
+      Motivo: ${motivo}`;
 
     return {
       mensaje,
