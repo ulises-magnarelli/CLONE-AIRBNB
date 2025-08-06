@@ -2,6 +2,11 @@ import express from "express";
 import healthRoutes from "./src/routes/healthRoute.js";
 import usuarioRoutes from "./src/routes/usuarioRoute.js";
 import alojamientoRoutes from "./src/routes/alojamientoRoute.js"; 
+import reservaRoutes from "./src/routes/reservaRoute.js";
+import { registerNotificacionRoutes } from "./src/routes/notificacionRoute.js";
+
+
+
 const app = express();
 
 app.use(express.json());
@@ -14,4 +19,5 @@ app.listen(PORT, () => {
 
 app.use(usuarioRoutes);
 app.use(alojamientoRoutes);
-
+app.use(reservaRoutes);
+app.use(registerNotificacionRoutes)

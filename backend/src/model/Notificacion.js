@@ -1,47 +1,47 @@
 import { EstadoNotificacion } from "./enums/EstadoNotificacion.js";
 
 export class Notificacion {
-  constructor(mensaje, destinatario, fechaAlta = new Date(), estado = EstadoNotificacion.PENDIENTE, fechaLeida = null) {
-    this.mensaje = mensaje;
-    this.fechaAlta = fechaAlta;
-    this.estado = estado;
-    this.fechaLeida = fechaLeida;
-    this.destinatario = destinatario;
-  }
-
   static crearNotificacionReservaCreada(reserva) {
-    const mensaje = `Nueva reserva para el alojamiento ${reserva.alojamiento.nombre}
-      desde ${reserva.rangoFechas.fechaInicio.toLocaleDateString("en-GB")}  
-      hasta ${reserva.rangoFechas.fechaFin.toLocaleDateString("en-GB")}
-      hecha por ${reserva.huespedReservador.nombre}.`
+    const mensaje = `Nueva reserva para el alojamiento "${reserva.alojamiento.nombre}"
+      desde ${new Date(reserva.fechaInicio).toLocaleDateString("en-GB")}  
+      hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")}.`;
 
-      return new Notificacion(mensaje, reserva.alojamiento.anfitrion);
+    return {
+      mensaje,
+      fechaAlta: new Date(),
+      estado: EstadoNotificacion.PENDIENTE,
+      fechaLeida: null,
+      usuario: { connect: { id: reserva.alojamiento.anfitrionId } },
+    };
   }
 
   static crearNotificacionReservaAceptada(reserva) {
-    const mensaje =
-      `La reserva para el alojamiento ${reserva.alojamiento.nombre}
-      desde ${reserva.rangoFechas.fechaInicio.toLocaleDateString("en-GB")}
-      hasta ${reserva.rangoFechas.fechaFin.toLocaleDateString("en-GB")}
-      fue aceptada por ${reserva.alojamiento.anfitrion.nombre}.`;
+    const mensaje = `Tu reserva para el alojamiento "${reserva.alojamiento.nombre}"
+      desde ${new Date(reserva.fechaInicio).toLocaleDateString("en-GB")}  
+      hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")}
+      fue aceptada por el anfitrión.`;
 
-    return new Notificacion(mensaje, reserva.huespedReservador);
+    return {
+      mensaje,
+      fechaAlta: new Date(),
+      estado: EstadoNotificacion.PENDIENTE,
+      fechaLeida: null,
+      usuario: { connect: { id: reserva.huespedReservadorId } },
+    };
   }
 
   static crearNotificacionReservaCancelada(reserva, motivo) {
-    const mensaje =
-      `La reserva para el alojamiento ${reserva.alojamiento.nombre}
-      desde ${reserva.rangoFechas.fechaInicio.toLocaleDateString("en-GB")}
-      hasta ${reserva.rangoFechas.fechaFin.toLocaleDateString("en-GB")}
-      fue cancelada por ${reserva.huespedReservador.nombre}
-      por el siguiente motivo: ${motivo}`;
+    const mensaje = `La reserva para el alojamiento "${reserva.alojamiento.nombre}"
+      desde ${new Date(reserva.fechaInicio).toLocaleDateString("en-GB")}
+      hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")}
+      fue cancelada. Motivo: ${motivo}`;
 
-    return new Notificacion(mensaje, reserva.alojamiento.anfitrion);
+    return {
+      mensaje,
+      fechaAlta: new Date(),
+      estado: EstadoNotificacion.PENDIENTE,
+      fechaLeida: null,
+      usuario: { connect: { id: reserva.alojamiento.anfitrionId } },
+    };
   }
-
-  marcarComoLeida() {
-    this.estado = EstadoNotificacion.LEIDA;
-    this.fechaLeida = new Date();
-  }
-
 }
