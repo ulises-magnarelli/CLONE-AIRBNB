@@ -1,4 +1,7 @@
 import express from "express";
+import cors from "cors"; // 👈 AGREGAR ESTO
+
+
 import healthRoutes from "./src/routes/healthRoute.js";
 import usuarioRoutes from "./src/routes/usuarioRoute.js";
 import alojamientoRoutes from "./src/routes/alojamientoRoute.js"; 
@@ -8,16 +11,22 @@ import { registerNotificacionRoutes } from "./src/routes/notificacionRoute.js";
 
 
 const app = express();
+app.use(cors()); // 👈 AGREGAR ESTO
 
 app.use(express.json());
-app.use(healthRoutes); // Ruta /health
 
-const PORT = process.env.PORT || 3000;
+
+app.use(healthRoutes); // Ruta /health
+app.use(usuarioRoutes);
+app.use(alojamientoRoutes);
+app.use(reservaRoutes);
+
+const getController = (ControllerClass) => new ControllerClass();
+registerNotificacionRoutes(app, getController);
+
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en puerto ${PORT}`);
 });
 
-app.use(usuarioRoutes);
-app.use(alojamientoRoutes);
-app.use(reservaRoutes);
-app.use(registerNotificacionRoutes)
