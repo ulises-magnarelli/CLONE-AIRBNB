@@ -30,7 +30,7 @@ export const fetchAlojamientosBackend = async (filtros = {}) => {
     }
   });
 
-  url.searchParams.append("limit", "8");
+  url.searchParams.append("limit", "100"); // Limite por defecto
 
   // En caso de emergencia rompa el vidrio y descomente la linea
   //console.log("Request completo a backend:", url.toString());
@@ -57,96 +57,96 @@ export const fetchAlojamiento = async (id) => {
   }
 };
 
-export const fetchReservasDeUsuarioBackend = async (id) => {
-  const url = new URL(`${API_BASE_URL}/reservas`);
-  url.searchParams.append("id", id);
+// export const fetchReservasDeUsuarioBackend = async (id) => {
+//   const url = new URL(`${API_BASE_URL}/reservas`);
+//   url.searchParams.append("id", id);
 
-  try {
-    const response = await axios.get(url.toString());
-    console.log("Request completo a backend:", url.toString(), response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching reservas:", error);
-    throw error;
-  }
-}
+//   try {
+//     const response = await axios.get(url.toString());
+//     console.log("Request completo a backend:", url.toString(), response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching reservas:", error);
+//     throw error;
+//   }
+// }
 
-export const fetchNotificacionesDeUsuarioBackend = async (id) => {
-  const url = new URL(`${API_BASE_URL}/notificaciones`);
-  url.searchParams.append("destinatario", id);
+// export const fetchNotificacionesDeUsuarioBackend = async (id) => {
+//   const url = new URL(`${API_BASE_URL}/notificaciones`);
+//   url.searchParams.append("destinatario", id);
 
-  try {
-    const response = await axios.get(url.toString());
-    console.log("Request completo a backend:", url.toString(), response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching notificaciones:", error);
-    throw error;
-  }
-};
+//   try {
+//     const response = await axios.get(url.toString());
+//     console.log("Request completo a backend:", url.toString(), response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching notificaciones:", error);
+//     throw error;
+//   }
+// };
 
-export const MarcarComoLeidaBackend = async (id) => {
-  const url = `${API_BASE_URL}/notificaciones/${id}`;
-  try {
-    const response = await axios.patch(url);
-    console.log("Request completo a backend:", url, response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error marking notification as read:", error);
-    throw error;
-  }
-};
+// export const MarcarComoLeidaBackend = async (id) => {
+//   const url = `${API_BASE_URL}/notificaciones/${id}`;
+//   try {
+//     const response = await axios.patch(url);
+//     console.log("Request completo a backend:", url, response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error marking notification as read:", error);
+//     throw error;
+//   }
+// };
 
 
-export const crearReservaBackend = async (datosReserva) => {
-  const url = `${API_BASE_URL}/reservas`;
-  try {
-    const response = await axios.post(url, datosReserva);
-    console.log("Reserva creada:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("POST falló:", error.response?.data || error);
-    return -1
-  }
-};
+// export const crearReservaBackend = async (datosReserva) => {
+//   const url = `${API_BASE_URL}/reservas`;
+//   try {
+//     const response = await axios.post(url, datosReserva);
+//     console.log("Reserva creada:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("POST falló:", error.response?.data || error);
+//     return -1
+//   }
+// };
 
-export const aceptarReservaBackend = async (idReserva) => {
-  const url = `${API_BASE_URL}/reservas/${idReserva}`;
-  try {
-    const response = await axios.patch(url, {
-    "estado" : "ACEPTADA"
-  });
-    console.log("Reserva aceptada:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("PATCH falló:", error.response?.data || error);
-    return -1;
-  }
-}
+// export const aceptarReservaBackend = async (idReserva) => {
+//   const url = `${API_BASE_URL}/reservas/${idReserva}`;
+//   try {
+//     const response = await axios.patch(url, {
+//     "estado" : "ACEPTADA"
+//   });
+//     console.log("Reserva aceptada:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("PATCH falló:", error.response?.data || error);
+//     return -1;
+//   }
+// }
 
-export const cancelarReservaBackend = async (idReserva) => {
-  const url = `${API_BASE_URL}/reservas/${idReserva}`;
-  try {
-    const response = await axios.patch(url, {
-    "estado" : "CANCELADA"
-  });
-    console.log("Reserva aceptada:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("PATCH falló:", error.response?.data || error);
-    return -1;
-  }
-}
+// export const cancelarReservaBackend = async (idReserva) => {
+//   const url = `${API_BASE_URL}/reservas/${idReserva}`;
+//   try {
+//     const response = await axios.patch(url, {
+//     "estado" : "CANCELADA"
+//   });
+//     console.log("Reserva aceptada:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("PATCH falló:", error.response?.data || error);
+//     return -1;
+//   }
+// }
 
-export const crearAlojamientoBackend = async (alojamiento) => {
-  const url = `${API_BASE_URL}/alojamientos`;
-  try {
-    const response = await axios.post(url, alojamiento);
-    console.log("Alojamiento creado:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("POST falló:", error.response?.data || error);
-    return -1;
-  }
-};
+// export const crearAlojamientoBackend = async (alojamiento) => {
+//   const url = `${API_BASE_URL}/alojamientos`;
+//   try {
+//     const response = await axios.post(url, alojamiento);
+//     console.log("Alojamiento creado:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("POST falló:", error.response?.data || error);
+//     return -1;
+//   }
+// };
 

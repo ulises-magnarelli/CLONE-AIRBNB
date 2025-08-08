@@ -4,12 +4,14 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Image from 'next/image';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function AlojamientoCard({ alojamiento }) {
   const [favorito, setFavorito] = useState(false);
   const imagenUrl = alojamiento.fotos?.[0]?.path?.trim();
 
   return (
+    <Link href={`/alojamientos/${alojamiento.id}`}>
     <div className="min-w-[270px] max-w-[270px] bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative group">
       <div className="relative w-full h-[220px] bg-gray-100 rounded-xl overflow-hidden">
 
@@ -54,5 +56,6 @@ export default function AlojamientoCard({ alojamiento }) {
         <p className="text-xs">⭐ {alojamiento.rating ?? '4.8'}</p>
       </div>
     </div>
+    </Link>
   );
 }
