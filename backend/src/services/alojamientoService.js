@@ -49,6 +49,17 @@ export class AlojamientoService {
         nombre: alojamiento.anfitrion?.nombre,
         email: alojamiento.anfitrion?.email,
       },
+      opiniones: alojamiento.opiniones?.map((r) => ({
+      id: r.id,
+      comentario: r.comentario,
+      puntuacion: r.puntuacion,
+      fechaCreacion: r.fechaCreacion,
+      autor: {
+        id: r.autor.id,
+        nombre: r.autor.nombre,
+        email: r.autor.email
+      }
+    })) ?? [],
     };
   }
 }

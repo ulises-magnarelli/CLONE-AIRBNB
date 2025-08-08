@@ -6,8 +6,18 @@ export class UsuarioRepository {
   }
 
   async findById(id) {
-    return await prisma.usuario.findUnique({ where: { id: Number(id) } });
+    return await prisma.usuario.findUnique({
+      where: { id: Number(id) },
+      include: {
+        notificaciones: true,
+        reseñas: {
+          include: { alojamiento: true },
+          orderBy: { fechaCreacion: 'desc' },
+        }
+      }
+    });
   }
+
 
   async create(data) {
     const usuarioCreado = await prisma.usuario.create({ data });

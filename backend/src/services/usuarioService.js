@@ -30,7 +30,7 @@ export class UsuarioService {
     const usuarioModificado = await this.usuarioRepository.update(id, usuario);
     return this.toDTO(usuarioModificado);
   }
-
+  
   toDTO(usuario) {
     if (!usuario) throw new NotFoundError("Usuario no encontrado");
     return {
@@ -39,6 +39,16 @@ export class UsuarioService {
       email: usuario.email,
       tipo: usuario.tipo,
       notificaciones: usuario.notificaciones ?? [],
+      reseñas: usuario.reseñas?.map((r) => ({
+        id: r.id,
+        comentario: r.comentario,
+        puntuacion: r.puntuacion,
+        fechaCreacion: r.fechaCreacion,
+        alojamiento: {
+          id: r.alojamiento.id,
+          nombre: r.alojamiento.nombre
+        }
+      })) ?? [],
     };
   }
 }

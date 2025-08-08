@@ -7,6 +7,7 @@ import usuarioRoutes from "./src/routes/usuarioRoute.js";
 import alojamientoRoutes from "./src/routes/alojamientoRoute.js"; 
 import reservaRoutes from "./src/routes/reservaRoute.js";
 import { registerNotificacionRoutes } from "./src/routes/notificacionRoute.js";
+import opinionRoutes from './src/routes/opinionRoute.js';
 
 
 
@@ -20,6 +21,7 @@ app.use(healthRoutes); // Ruta /health
 app.use(usuarioRoutes);
 app.use(alojamientoRoutes);
 app.use(reservaRoutes);
+app.use(opinionRoutes);
 
 const getController = (ControllerClass) => new ControllerClass();
 registerNotificacionRoutes(app, getController);

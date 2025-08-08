@@ -22,7 +22,7 @@ model Usuario {
   alojamientos              Alojamiento[]
   reservas                  Reserva[]
   cambiosDeEstadoRealizados CambioEstadoReserva[] // 👈 ESTA LÍNEA
-  reseñas                   Reseña[]        // ← nuevas reseñas hechas por el usuario
+  opiniones                   Opinion[]        // ← nuevas opiniones hechas por el usuario
 }
 
 model Notificacion {
@@ -51,7 +51,7 @@ model Alojamiento {
   fotos            Foto[]
   reservas         Reserva[]
   caracteristicas  Caracteristica[] @relation("AlojamientoCaracteristicas")
-  reseñas         Reseña[]        // ← reseñas recibidas
+  opiniones        Opinion[]        // ← opiniones recibidas
 }
 
 model Pais {
@@ -121,7 +121,7 @@ model CambioEstadoReserva {
 
 
 
-model Reseña {
+model Opinion {
   id             Int          @id @default(autoincrement())
   comentario     String
   puntuacion     Float
