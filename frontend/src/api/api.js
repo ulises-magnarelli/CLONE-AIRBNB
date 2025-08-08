@@ -57,6 +57,17 @@ export const fetchAlojamiento = async (id) => {
   }
 };
 
+
+export const crearOpinionBackend = async (opinion) => {
+  const url = `${API_BASE_URL}/opiniones`;
+  try {
+    const response = await axios.post(url, opinion);
+    return response.data;
+  } catch (error) {
+    console.error("Error al crear opinión:", error);
+    return -1;
+  }
+};
 // export const fetchReservasDeUsuarioBackend = async (id) => {
 //   const url = new URL(`${API_BASE_URL}/reservas`);
 //   url.searchParams.append("id", id);

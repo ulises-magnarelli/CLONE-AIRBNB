@@ -39,7 +39,7 @@ export class UsuarioService {
       email: usuario.email,
       tipo: usuario.tipo,
       notificaciones: usuario.notificaciones ?? [],
-      reseñas: usuario.reseñas?.map((r) => ({
+      opiniones: usuario.opiniones?.map((r) => ({
         id: r.id,
         comentario: r.comentario,
         puntuacion: r.puntuacion,

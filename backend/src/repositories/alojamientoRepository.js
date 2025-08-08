@@ -78,7 +78,7 @@ async findAll(filtros = {}, page = 1, limit = 10) {
         },
         fotos: true,
         caracteristicas: true,
-        reseñas: {
+        opiniones: {
         include: { autor: true },
         orderBy: { fechaCreacion: 'desc' },
       }

@@ -10,7 +10,7 @@ export class UsuarioRepository {
       where: { id: Number(id) },
       include: {
         notificaciones: true,
-        reseñas: {
+        opiniones: {
           include: { alojamiento: true },
           orderBy: { fechaCreacion: 'desc' },
         }
