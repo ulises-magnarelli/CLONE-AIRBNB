@@ -8,48 +8,48 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:30
 
 // Fetch Alojamientos 
 export const fetchAlojamientosBackend = async (filtros = {}) => {
-  /*
-  el objeto filtro debe tener las keys nombradas asi:
-      pais
-      lat
-      long
-      precioMin
-      precioMax
-      cantHuespede
-      caracteristicas
-      page
-      limit
-  */
-
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
   const url = new URL(`${API_BASE_URL}/alojamientos`);
 
   Object.keys(filtros).forEach(key => {
-    if (key === "caracteristicas" && Array.isArray(filtros[key])) {
-      filtros[key].forEach((caract) => {
-        url.searchParams.append("caracteristicas", caract);
-      });
-    } else if (key === "fechaInicio" || key === "fechaFin") {
-      url.searchParams.append(key, filtros[key].toISOString().split('T')[0]);
-    } else {
-      url.searchParams.append(key, filtros[key]);
+    const value = filtros[key];
+    if (value == null || value === '') return; // limpia vacíos
+
+    if (key === "caracteristicas" && Array.isArray(value)) {
+      value.forEach((caract) => url.searchParams.append("caracteristicas", caract));
+      return;
     }
+
+    if (key === "fechaInicio" || key === "fechaFin") {
+      // Aceptar Date o string (YYYY-MM-DD)
+      let toSend;
+      if (value instanceof Date) {
+        toSend = value.toISOString().split('T')[0];
+      } else if (typeof value === 'string') {
+        // si viene "YYYY-MM-DD" lo mando tal cual
+        toSend = value;
+      } else {
+        // último intento: intentar parsear
+        const d = new Date(value);
+        toSend = isNaN(d) ? undefined : d.toISOString().split('T')[0];
+      }
+      if (toSend) url.searchParams.append(key, toSend);
+      return;
+    }
+
+    url.searchParams.append(key, value);
   });
 
-  url.searchParams.append("limit", "100"); // Limite por defecto
-
-  // En caso de emergencia rompa el vidrio y descomente la linea
-  //console.log("Request completo a backend:", url.toString());
+  url.searchParams.append("limit", "100");
 
   try {
-    const response = await axios.get(url.toString());
-
-    return response.data;
+    const { data } = await axios.get(url.toString());
+    return data;
   } catch (error) {
     console.error("Error fetching alojamientos:", error);
     throw error;
   }
 };
-
 
 
 

@@ -1,3 +1,4 @@
+// app/alojamientos/page.js
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -14,11 +15,13 @@ export default function AlojamientosPage() {
 
   // Tomamos filtros desde la URL
   const filtros = useMemo(() => {
-    const q = searchParams.get('q') || undefined;                 // ← NUEVO (texto libre)
-    const ciudad = searchParams.get('ciudad') || undefined;       // compatibilidad
-    const pais = searchParams.get('pais') || undefined;           // compatibilidad
+    const q = searchParams.get('q') || undefined;                 // texto libre
+    const ciudad = searchParams.get('ciudad') || undefined;       // compat
+    const pais = searchParams.get('pais') || undefined;           // compat
     const cantHuespedes = searchParams.get('cantHuespedes') || undefined;
     const page = searchParams.get('page') || undefined;
+    const fechaInicio = searchParams.get('fechaInicio') || undefined; // YYYY-MM-DD
+    const fechaFin = searchParams.get('fechaFin') || undefined;       // YYYY-MM-DD
 
     return {
       ...(q && { q }),
@@ -26,6 +29,8 @@ export default function AlojamientosPage() {
       ...(pais && { pais }),
       ...(cantHuespedes && { cantHuespedes }),
       ...(page && { page }),
+      ...(fechaInicio && { fechaInicio }),
+      ...(fechaFin && { fechaFin }),
     };
   }, [searchParams]);
 
@@ -36,7 +41,7 @@ export default function AlojamientosPage() {
       setLoading(true);
       setError('');
       try {
-        // Si hay q (texto libre), hacemos 2 requests (ciudad/pais) y unimos
+        // Con q: hago 2 requests (ciudad/pais) y uno resultados
         if (filtros.q?.trim()) {
           const texto = filtros.q.trim();
           const base = { ...filtros };
@@ -47,12 +52,11 @@ export default function AlojamientosPage() {
             fetchAlojamientosBackend({ ...base, pais: texto }),
           ]);
 
-          // Deduplicar por id
           const map = new Map();
           [...porCiudad, ...porPais].forEach((a) => map.set(a.id, a));
           const unidos = Array.from(map.values());
 
-          // (opcional) relevancia: exact match primero, luego por nombre
+          // (opcional) exact match primero
           const qLower = texto.toLowerCase();
           unidos.sort((a, b) => {
             const aCity = a?.direccion?.ciudad?.nombre?.toLowerCase() || '';
@@ -69,7 +73,7 @@ export default function AlojamientosPage() {
           return;
         }
 
-        // Sin q, comportamiento habitual (usa ciudad/pais si vinieran)
+        // Sin q, paso los filtros tal cual
         const data = await fetchAlojamientosBackend(filtros);
         if (!cancelado) setAlojamientos(data);
       } catch (e) {
@@ -87,13 +91,26 @@ export default function AlojamientosPage() {
   if (loading) return <p className="p-4">Cargando alojamientos...</p>;
   if (error) return <p className="p-4 text-red-600">{error}</p>;
 
-  const titulo = filtros.q
-    ? `Alojamientos en “${filtros.q}”`
-    : filtros.ciudad
-      ? `Alojamientos en ${filtros.ciudad}`
-      : filtros.pais
-        ? `Alojamientos en ${filtros.pais}`
-        : 'Alojamientos disponibles';
+  // Título amigable
+  const tituloBase =
+    filtros.q
+      ? `Alojamientos en “${filtros.q}”`
+      : filtros.ciudad
+        ? `Alojamientos en ${filtros.ciudad}`
+        : filtros.pais
+          ? `Alojamientos en ${filtros.pais}`
+          : 'Alojamientos disponibles';
+
+  const rangoFechas =
+    filtros.fechaInicio && filtros.fechaFin
+      ? ` — ${filtros.fechaInicio} → ${filtros.fechaFin}`
+      : filtros.fechaInicio
+        ? ` — desde ${filtros.fechaInicio}`
+        : filtros.fechaFin
+          ? ` — hasta ${filtros.fechaFin}`
+          : '';
+
+  const titulo = `${tituloBase}${rangoFechas}`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
