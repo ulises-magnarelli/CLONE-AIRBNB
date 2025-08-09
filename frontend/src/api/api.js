@@ -2,6 +2,11 @@ import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
 
+
+
+
+
+// Fetch Alojamientos 
 export const fetchAlojamientosBackend = async (filtros = {}) => {
   /*
   el objeto filtro debe tener las keys nombradas asi:
@@ -45,6 +50,12 @@ export const fetchAlojamientosBackend = async (filtros = {}) => {
   }
 };
 
+
+
+
+
+
+// Fetch Alojamiento por ID
 export const fetchAlojamiento = async (id) => {
   const url = new URL(`${API_BASE_URL}/alojamientos`);
   try {

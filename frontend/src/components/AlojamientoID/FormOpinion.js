@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { crearOpinionBackend } from '@/api/api'; // hay que agregarlo
+import { Rating } from '@mui/material';
 
 export default function FormOpinion({ alojamientoId, usuarioId, onOpinionCreada }) {
   const [comentario, setComentario] = useState('');
@@ -30,18 +31,19 @@ export default function FormOpinion({ alojamientoId, usuarioId, onOpinionCreada 
         value={comentario}
         onChange={(e) => setComentario(e.target.value)}
         required
-        placeholder="Escribí tu opinión..."
+        placeholder="Escribí tu opinión...(esto despues lo podria poner solo para los usuarios que se hayan alojado)"
         className="w-full border rounded-lg p-2"
       />
-      <input
-        type="number"
-        step="0.1"
-        min="1"
-        max="5"
-        value={puntuacion}
-        onChange={(e) => setPuntuacion(e.target.value)}
-        className="w-24 border rounded p-1"
-      />
+     <div>
+        <Rating
+          name="puntuacion"
+          value={puntuacion}
+          precision={0.5}
+          onChange={(_, newValue) => {
+            if (newValue !== null) setPuntuacion(newValue);
+          }}
+        />
+      </div>
       <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
         Enviar opinión
       </button>

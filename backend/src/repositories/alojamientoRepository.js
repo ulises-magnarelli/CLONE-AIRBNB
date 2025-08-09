@@ -28,23 +28,20 @@ async findAll(filtros = {}, page = 1, limit = 10) {
   }
 
   // ciudad y país se filtran de forma anidada
-  if (filtros.ciudad || filtros.pais) {
-    where.direccion = {
-      ciudad: {
-        AND: [
-          filtros.ciudad ? { nombre: filtros.ciudad } : {},
-          filtros.pais
-            ? {
-                pais: {
-                  nombre: filtros.pais,
-                },
-              }
-            : {},
-        ],
-      },
-    };
-  }
-
+if (filtros.ciudad || filtros.pais) {
+  where.direccion = {
+    ciudad: {
+      AND: [
+        filtros.ciudad
+          ? { nombre: { contains: filtros.ciudad, mode: 'insensitive' } }
+          : {},
+        filtros.pais
+          ? { pais: { nombre: { contains: filtros.pais, mode: 'insensitive' } } }
+          : {},
+      ],
+    },
+  };
+}
   return await prisma.alojamiento.findMany({
     where,
     include: {
