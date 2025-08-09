@@ -12,20 +12,65 @@ export default function AlojamientosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Tomamos filtros desde la URL (solo ciudad y page por ahora)
+  // Tomamos filtros desde la URL
   const filtros = useMemo(() => {
-    const ciudad = searchParams.get('ciudad') || undefined;
+    const q = searchParams.get('q') || undefined;                 // ← NUEVO (texto libre)
+    const ciudad = searchParams.get('ciudad') || undefined;       // compatibilidad
+    const pais = searchParams.get('pais') || undefined;           // compatibilidad
+    const cantHuespedes = searchParams.get('cantHuespedes') || undefined;
     const page = searchParams.get('page') || undefined;
-    return { ...(ciudad && { ciudad }), ...(page && { page }) };
+
+    return {
+      ...(q && { q }),
+      ...(ciudad && { ciudad }),
+      ...(pais && { pais }),
+      ...(cantHuespedes && { cantHuespedes }),
+      ...(page && { page }),
+    };
   }, [searchParams]);
 
   useEffect(() => {
     let cancelado = false;
+
     async function traerAlojamientos() {
       setLoading(true);
       setError('');
       try {
-        const data = await fetchAlojamientosBackend(filtros); // ← pasamos filtros
+        // Si hay q (texto libre), hacemos 2 requests (ciudad/pais) y unimos
+        if (filtros.q?.trim()) {
+          const texto = filtros.q.trim();
+          const base = { ...filtros };
+          delete base.q;
+
+          const [porCiudad, porPais] = await Promise.all([
+            fetchAlojamientosBackend({ ...base, ciudad: texto }),
+            fetchAlojamientosBackend({ ...base, pais: texto }),
+          ]);
+
+          // Deduplicar por id
+          const map = new Map();
+          [...porCiudad, ...porPais].forEach((a) => map.set(a.id, a));
+          const unidos = Array.from(map.values());
+
+          // (opcional) relevancia: exact match primero, luego por nombre
+          const qLower = texto.toLowerCase();
+          unidos.sort((a, b) => {
+            const aCity = a?.direccion?.ciudad?.nombre?.toLowerCase() || '';
+            const aPais = a?.direccion?.ciudad?.pais?.nombre?.toLowerCase() || '';
+            const bCity = b?.direccion?.ciudad?.nombre?.toLowerCase() || '';
+            const bPais = b?.direccion?.ciudad?.pais?.nombre?.toLowerCase() || '';
+            const aExact = aCity === qLower || aPais === qLower;
+            const bExact = bCity === qLower || bPais === qLower;
+            if (aExact !== bExact) return aExact ? -1 : 1;
+            return (a.nombre || '').localeCompare(b.nombre || '');
+          });
+
+          if (!cancelado) setAlojamientos(unidos);
+          return;
+        }
+
+        // Sin q, comportamiento habitual (usa ciudad/pais si vinieran)
+        const data = await fetchAlojamientosBackend(filtros);
         if (!cancelado) setAlojamientos(data);
       } catch (e) {
         if (!cancelado) setError('No pudimos cargar los alojamientos.');
@@ -34,15 +79,21 @@ export default function AlojamientosPage() {
         if (!cancelado) setLoading(false);
       }
     }
+
     traerAlojamientos();
     return () => { cancelado = true; };
-  }, [filtros]); // ← se reactiva cuando cambia la URL (desde el Header)
+  }, [filtros]);
 
   if (loading) return <p className="p-4">Cargando alojamientos...</p>;
   if (error) return <p className="p-4 text-red-600">{error}</p>;
 
-  const titulo =
-    filtros.ciudad ? `Alojamientos en ${filtros.ciudad}` : 'Alojamientos disponibles';
+  const titulo = filtros.q
+    ? `Alojamientos en “${filtros.q}”`
+    : filtros.ciudad
+      ? `Alojamientos en ${filtros.ciudad}`
+      : filtros.pais
+        ? `Alojamientos en ${filtros.pais}`
+        : 'Alojamientos disponibles';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">

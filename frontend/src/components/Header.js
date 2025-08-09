@@ -10,19 +10,21 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Header() {
-
-  const [ciudad, setCiudad] = useState('');
   const router = useRouter();
+  const [q, setQ] = useState('');                 // ← texto libre (ciudad o país)
+  const [cantHuespedes, setCantHuespedes] = useState(1);
 
   const handleBuscar = () => {
-    const q = ciudad?.trim();
-    if (!q) return;
-    router.push(`/alojamientos?ciudad=${encodeURIComponent(q)}&page=1`);
+    const sp = new URLSearchParams();
+    if (q.trim()) sp.set('q', q.trim());
+    if (Number(cantHuespedes) > 0) sp.set('cantHuespedes', String(cantHuespedes));
+    sp.set('page', '1');
+    router.push(`/alojamientos?${sp.toString()}`);
   };
+
   return (
     <header className="sticky top-0 z-50 bg-white border-b-2 border-gray-200 shadow-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-
         {/* Logo */}
         <div className="text-pink-600 text-2xl font-bold">airbnb</div>
 
@@ -51,33 +53,48 @@ export default function Header() {
 
           {/* Search Box */}
           <div className="flex items-center bg-white rounded-full shadow-[0px_4px_12px_rgba(0,0,0,0.1)] overflow-hidden flex-1 max-w-4xl border border-gray-200">
+            {/* ¿Dónde? */}
             <div className="px-4 py-2 border-r border-gray-300 flex items-center">
               <TextField
                 variant="standard"
-                label="Lugar"
-                placeholder="Explorar destinos"
-                value={ciudad}
-                onChange={(e) => setCiudad(e.target.value)}
+                label="Lugar"                 // ← línea superior (queda fija)
+                placeholder="Explorar destinos" // ← línea inferior (desaparece al escribir)
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleBuscar(); }}
                 InputProps={{ disableUnderline: true }}
-                sx={{ '& .MuiInputBase-input': { fontSize: '0.9rem', padding: 0 }, width: '140px' }}
+                InputLabelProps={{ shrink: true }} // ← clave para que el label quede arriba siempre
               />
             </div>
 
+            {/* Check-in */}
             <div className="px-6 py-3 border-r border-gray-300">
               <p className="text-xs text-[#717171] font-medium">Check-in</p>
               <p className="text-sm text-[#222222]">¿Cuándo?</p>
             </div>
+
+            {/* Check-out */}
             <div className="px-6 py-3 border-r border-gray-300">
               <p className="text-xs text-[#717171] font-medium">Check-out</p>
               <p className="text-sm text-[#222222]">¿Cuándo?</p>
             </div>
-            <div className="px-6 py-3 flex-1">
+
+            {/* Viajeros */}
+            <div className="px-6 py-3">
               <p className="text-xs text-[#717171] font-medium">Viajeros</p>
-              <p className="text-sm text-[#222222]">¿Cuántos?</p>
-
-
+              <TextField
+                type="number"
+                inputProps={{ min: 1 }}
+                variant="standard"
+                value={cantHuespedes}
+                onChange={(e) => setCantHuespedes(Number(e.target.value))}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleBuscar(); }}
+                InputProps={{ disableUnderline: true }}
+                sx={{ '& .MuiInputBase-input': { fontSize: '0.9rem', padding: 0, width: 80 } }}
+              />
             </div>
+
+            {/* Botón buscar */}
             <button
               onClick={handleBuscar}
               className="bg-[#FF385C] hover:bg-[#e03151] text-white p-3 rounded-full m-2 transition"
