@@ -6,6 +6,8 @@ export default function Home() {
       <AlojamientoSlider ciudad="Bariloche" />
       <AlojamientoSlider ciudad="Mendoza" />
       <AlojamientoSlider ciudad="Madrid" />
+      <AlojamientoSlider ciudad="Buenos Aires" />
+
     </div>
   );
 }
