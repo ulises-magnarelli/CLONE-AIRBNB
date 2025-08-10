@@ -21,7 +21,9 @@ export default function Header() {
   const handleBuscar = () => {
     const sp = new URLSearchParams();
 
-    if (q.trim()) sp.set('q', q.trim());
+      const lugar = q.trim() ? q.trim() : "Buenos Aires";
+      sp.set("q", lugar);
+
     if (Number(cantHuespedes) > 0) sp.set('cantHuespedes', String(cantHuespedes));
 
         // validar fechas (auto‑corrige si están invertidas)
