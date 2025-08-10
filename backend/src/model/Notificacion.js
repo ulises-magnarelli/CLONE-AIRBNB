@@ -4,8 +4,7 @@ export class Notificacion {
   static crearNotificacionReservaCreada(reserva) {
     const mensaje = `Nueva reserva para el alojamiento "${reserva.alojamiento.nombre}"
       desde ${new Date(reserva.fechaInicio).toLocaleDateString("en-GB")}  
-      hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")},
-      realizada por ${reserva.huespedReservador.nombre}.`;
+      hasta ${new Date(reserva.fechaFin).toLocaleDateString("en-GB")}`;
 
     return {
       mensaje,
