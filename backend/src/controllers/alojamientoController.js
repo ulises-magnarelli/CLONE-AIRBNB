@@ -8,18 +8,22 @@ export class AlojamientoController {
 async findAll(req, res, next) {
   try {
     const {
+      q,
       ciudad,
       pais,
       precioMin,
       precioMax,
       cantHuespedes,
       caracteristicas,
+      fechaInicio,
+      fechaFin,
       page,
       limit,
     } = req.query;
 
     const filtros = {};
 
+    if (q && q.trim()) filtros.q = q.trim();
     if (ciudad) filtros.ciudad = ciudad;
     if (pais) filtros.pais = pais;
     if (precioMin && precioMax) {
@@ -33,7 +37,15 @@ async findAll(req, res, next) {
         ? caracteristicas
         : [caracteristicas];
     }
+    
+    // fechas: normalizar + autocorregir si vienen invertidas
+    let fi = fechaInicio ? new Date(fechaInicio) : null;
+    let ff = fechaFin    ? new Date(fechaFin)    : null;
 
+    if (fi && ff && fi > ff) [fi, ff] = [ff, fi];
+
+    if (fi) filtros.fechaInicio = fi;
+    if (ff) filtros.fechaFin    = ff;
     const pageNumber = parseInt(page) || 1;
     const limitNumber = parseInt(limit) || 10;
 

@@ -42,6 +42,36 @@ if (filtros.ciudad || filtros.pais) {
     },
   };
 }
+
+
+
+  const tieneInicio = Boolean(filtros.fechaInicio);
+  const tieneFin = Boolean(filtros.fechaFin);
+
+  if (tieneInicio || tieneFin) {
+    const overlap = { estado: 1 }; // 1 = CONFIRMADA (según tu schema)
+    const conds = [];
+
+    // reglas de solape:
+    // - si vienen ambas: res.inicio < finBusqueda && res.fin > inicioBusqueda
+    // - solo inicio:     res.fin    > inicioBusqueda
+    // - solo fin:        res.inicio < finBusqueda
+    if (tieneInicio && tieneFin) {
+      conds.push({ fechaInicio: { lt: new Date(filtros.fechaFin) } });
+      conds.push({ fechaFin: { gt: new Date(filtros.fechaInicio) } });
+    } else if (tieneInicio) {
+      conds.push({ fechaFin: { gt: new Date(filtros.fechaInicio) } });
+    } else if (tieneFin) {
+      conds.push({ fechaInicio: { lt: new Date(filtros.fechaFin) } });
+    }
+
+    overlap.AND = conds;
+
+    where.reservas = { none: overlap };
+  }
+
+
+
   return await prisma.alojamiento.findMany({
     where,
     include: {
