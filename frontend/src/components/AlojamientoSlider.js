@@ -44,9 +44,9 @@ export default function AlojamientoSlider({ ciudad }) {
   if (alojamientos.length === 0) return null;
 
   return (
-    <section className="mb-10">
+    <section className="mb-3">
       <div className="flex items-center justify-between px-4 mb-2">
-        <h2 className="text-xl font-semibold">Quedate cerca de {ciudad}</h2>
+        <h2 className="text-xl font-semibold">Alojate en {ciudad}</h2>
         <div className="flex gap-2">
           <button onClick={() => scroll(-1)} className="bg-white rounded-full p-1 shadow">
             <ChevronLeft />
