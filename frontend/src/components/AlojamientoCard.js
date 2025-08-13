@@ -11,7 +11,7 @@ export default function AlojamientoCard({ alojamiento }) {
   const imagenUrl = alojamiento.fotos?.[0]?.path?.trim();
 
   return (
-    <Link href={`/alojamientos/${alojamiento.id}`}>
+    <Link target='_blank' href={`/alojamientos/${alojamiento.id}`}>
       <div className="
           w-[180px] min-w-[180px] max-w-[180px]
           bg-white rounded-2xl overflow-hidden

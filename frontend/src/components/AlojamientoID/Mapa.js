@@ -13,7 +13,7 @@ export default function Mapa({ lat, long, ciudad }) {
         width="100%"
         height="300"
         loading="lazy"
-        className="rounded-lg"
+        className="rounded-2xl"
         style={{ border: 0 }}
       ></iframe>
     </Box>
