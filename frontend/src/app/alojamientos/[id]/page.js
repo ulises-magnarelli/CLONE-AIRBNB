@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { fetchAlojamiento } from '@/api/api';
+import { fetchAlojamiento, crearReservaBackend } from '@/api/api';
 
 import Mapa from '@/components/AlojamientoID/Mapa';
 import Servicios from '@/components/AlojamientoID/Servicios';
@@ -46,6 +46,31 @@ export default function AlojamientoDetalle() {
     anfitrion,
   } = alojamiento;
 
+
+
+    const handleReserve = async ({ checkIn, checkOut, guests }) => {
+    const datosReserva = {
+      usuarioId,                         // mock actual
+      alojamientoId: Number(id),         // real, de la URL
+      rangoFechas: { fechaInicio: checkIn, fechaFin: checkOut },
+      cantidadHuespedes: Number(guests),
+    };
+
+    const res = await crearReservaBackend(datosReserva);
+    if (res === -1) {
+      console.error('No se pudo crear la reserva');
+      alert('No se pudo crear la reserva. Revisá las fechas o intentá de nuevo.');
+      return;
+    }
+    // éxito simple
+    console.log('Reserva OK', res);
+    alert('Reserva creada con éxito ✅');
+    // TODO: opcional → redirigir a "mis reservas" o refrescar
+  };
+
+
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
       <GaleriaFotos fotos={fotos} />
@@ -64,6 +89,7 @@ export default function AlojamientoDetalle() {
           <BookingCard
             precioPorNoche={precioPorNoche ?? 115}
             moneda={moneda || 'USD'}
+            onReserve={handleReserve}     // 👈 conectar
           />
         </div>
       </section>

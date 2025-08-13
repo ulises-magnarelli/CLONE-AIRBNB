@@ -79,6 +79,26 @@ export const crearOpinionBackend = async (opinion) => {
     return -1;
   }
 };
+
+
+
+export const crearReservaBackend = async (datosReserva) => {
+  const url = `${API_BASE_URL}/reservas`;
+  try {
+    const response = await axios.post(url, datosReserva);
+    console.log("Reserva creada:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("POST falló:", error.response?.data || error);
+    return -1
+  }
+};
+
+
+
+
+
+
 // export const fetchReservasDeUsuarioBackend = async (id) => {
 //   const url = new URL(`${API_BASE_URL}/reservas`);
 //   url.searchParams.append("id", id);
@@ -120,17 +140,6 @@ export const crearOpinionBackend = async (opinion) => {
 // };
 
 
-// export const crearReservaBackend = async (datosReserva) => {
-//   const url = `${API_BASE_URL}/reservas`;
-//   try {
-//     const response = await axios.post(url, datosReserva);
-//     console.log("Reserva creada:", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("POST falló:", error.response?.data || error);
-//     return -1
-//   }
-// };
 
 // export const aceptarReservaBackend = async (idReserva) => {
 //   const url = `${API_BASE_URL}/reservas/${idReserva}`;

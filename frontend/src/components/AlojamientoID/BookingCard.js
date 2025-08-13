@@ -1,13 +1,36 @@
 "use client";
+import { useState, useMemo } from "react";
 
-export default function BookingSidebar({ precioPorNoche, moneda }) {
+export default function BookingCard({ precioPorNoche, moneda, onReserve }) {
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState("1");
+
+  const canReserve = useMemo(() => {
+    if (!checkIn || !checkOut) return false;
+    const ini = new Date(checkIn);
+    const fin = new Date(checkOut);
+    return fin > ini && Number(guests) > 0;
+  }, [checkIn, checkOut, guests]);
+
+  const handleReserve = () => {
+    if (!canReserve) return;
+    onReserve?.({
+      checkIn,
+      checkOut,
+      guests: Number(guests),
+    });
+  };
+
   return (
     <aside className="w-full lg:w-[420px]">
       <div className="sticky top-6">
         <div className="rounded-2xl border border-neutral-200 shadow-[0_6px_20px_rgba(0,0,0,.08)] p-5 bg-white">
-          {/* Precio + noches */}
+          {/* Precio + por noche */}
           <div className="flex items-baseline gap-2 mb-4">
-            <span className="text-2xl font-semibold">{precioPorNoche} {moneda}</span>
+            <span className="text-2xl font-semibold">
+              {precioPorNoche} {moneda}
+            </span>
             <span className="text-neutral-600">por noche</span>
           </div>
 
@@ -17,22 +40,24 @@ export default function BookingSidebar({ precioPorNoche, moneda }) {
             <div className="grid grid-cols-2 divide-x divide-neutral-300">
               <div className="p-3">
                 <label className="block text-[11px] font-semibold tracking-wide">
-                  CHECK‑IN
+                  CHECK-IN
                 </label>
                 <input
                   type="date"
-                  defaultValue=""
+                  value={checkIn}
+                  onChange={(e) => setCheckIn(e.target.value)}
                   className="w-full outline-none text-sm pt-1"
                   aria-label="Fecha de check-in"
                 />
               </div>
               <div className="p-3">
                 <label className="block text-[11px] font-semibold tracking-wide">
-                  CHECK‑OUT
+                  CHECK-OUT
                 </label>
                 <input
                   type="date"
-                  defaultValue=""
+                  value={checkOut}
+                  onChange={(e) => setCheckOut(e.target.value)}
                   className="w-full outline-none text-sm pt-1"
                   aria-label="Fecha de check-out"
                 />
@@ -46,7 +71,8 @@ export default function BookingSidebar({ precioPorNoche, moneda }) {
               </label>
               <div className="relative mt-1">
                 <select
-                  defaultValue="1"
+                  value={guests}
+                  onChange={(e) => setGuests(e.target.value)}
                   className="w-full appearance-none bg-transparent pr-8 text-sm outline-none"
                   aria-label="Cantidad de viajeros"
                 >
@@ -73,10 +99,13 @@ export default function BookingSidebar({ precioPorNoche, moneda }) {
             </div>
           </div>
 
-          {/* Botón (sin handler) */}
+          {/* Botón */}
           <button
+            onClick={handleReserve}
+            disabled={!canReserve}
             className="mt-4 w-full rounded-xl py-3 text-white font-semibold
               bg-[#FF385C] hover:bg-[#e13053]
+              disabled:opacity-50 disabled:cursor-not-allowed
               transition"
             aria-label="Reservar"
             type="button"
