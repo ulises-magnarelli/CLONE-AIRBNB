@@ -13,18 +13,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model Usuario {
+//   id                        Int                   @id @default(autoincrement())
+//   nombre                    String
+//   email                     String                @unique
+//   tipo                      Int
+//   notificaciones            Notificacion[]
+//   alojamientos              Alojamiento[]
+//   reservas                  Reserva[]
+//   cambiosDeEstadoRealizados CambioEstadoReserva[] // 👈 ESTA LÍNEA
+//   opiniones                   Opinion[]        // ← nuevas opiniones hechas por el usuario
+// }
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+}
 model Usuario {
-  id                        Int                   @id @default(autoincrement())
-  nombre                    String
-  email                     String                @unique
-  tipo                      Int
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  email     String   @unique
+  tipo      Int
+  passwordHash String?
+  provider     AuthProvider @default(LOCAL)
+  providerId   String?
+  ultimoLogin  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt DateTime @updatedAt   // 👈 requerida + auto-update
+
   notificaciones            Notificacion[]
   alojamientos              Alojamiento[]
   reservas                  Reserva[]
-  cambiosDeEstadoRealizados CambioEstadoReserva[] // 👈 ESTA LÍNEA
-  opiniones                   Opinion[]        // ← nuevas opiniones hechas por el usuario
-}
+  cambiosDeEstadoRealizados CambioEstadoReserva[]
+  opiniones                 Opinion[]
 
+  @@index([provider, providerId])
+}
 model Notificacion {
   id         Int       @id @default(autoincrement())
   mensaje    String
